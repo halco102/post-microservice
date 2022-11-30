@@ -30,7 +30,7 @@ class UserServiceTest {
 
     @BeforeEach
     public void beforeEachSetup() {
-        user = new User(1L, "admir", "imageUrl", new HashSet<>());
+        user = new User(1L, "admir", "email@email.com","imageUrl", new HashSet<>());
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
         Mockito.when(userRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.of(user));
     }
