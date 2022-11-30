@@ -50,15 +50,16 @@ public class PostService implements IPost {
     @Transactional
     public PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile) {
 
+        Set<Category> categories = new HashSet<>();
+
         //feign
         var checkIfUserExists = userClient.getPostedByDtoByUserId(requestDto.getUserId());
-
-        var user = iUser.saveUser(userMapper.postedByToEntity(checkIfUserExists));
-        Set<Category> categories = new HashSet<>();
 
         if (checkIfUserExists == null) {
             throw new  NotFoundException("The user was not found");
         }
+
+        var user = iUser.saveUser(userMapper.postedByToEntity(checkIfUserExists));
 
         if ((requestDto.getImageUrl() == null || requestDto.getImageUrl().isBlank()) && multipartFile == null)
             throw new BadRequestException("Bad request on post save");
