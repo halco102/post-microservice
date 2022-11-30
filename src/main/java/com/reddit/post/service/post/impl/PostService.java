@@ -1,6 +1,7 @@
 package com.reddit.post.service.post.impl;
 
 import com.reddit.post.dto.post.PostDto;
+import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.exception.BadRequestException;
 import com.reddit.post.exception.NotFoundException;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,15 +50,16 @@ public class PostService implements IPost {
     @Transactional
     public PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile) {
 
+        Set<Category> categories = new HashSet<>();
+
         //feign
         var checkIfUserExists = userClient.getPostedByDtoByUserId(requestDto.getUserId());
-
-        var user = iUser.saveUser(userMapper.postedByToEntity(checkIfUserExists));
-        Set<Category> categories = new HashSet<>();
 
         if (checkIfUserExists == null) {
             throw new  NotFoundException("The user was not found");
         }
+
+        var user = iUser.saveUser(userMapper.postedByToEntity(checkIfUserExists));
 
         if ((requestDto.getImageUrl() == null || requestDto.getImageUrl().isBlank()) && multipartFile == null)
             throw new BadRequestException("Bad request on post save");
@@ -115,5 +116,32 @@ public class PostService implements IPost {
         return postMapper.collectionEntityToDtos(getAllPostsByUserId);
     }
 
+    @Override
+    public void deletePostById(Long id) {
+
+    }
+
+    @Override
+    @Transactional
+    public PostDto editPostById(Long id, EditPostRequest request) {
+
+        Set<Category> categoryDtos = new HashSet<>();
+        var findPost = postRepository.findById(id).orElseThrow(() -> new NotFoundException("The post was not found"));
+
+        findPost.setTitle(request.getTitle());
+        findPost.setDescription(request.getDescription());
+        findPost.setAllowComment(request.isAllowComment());
+        findPost.setEditedAt(LocalDateTime.now());
+
+        request.getCategoryDtos().forEach(item -> {
+            categoryDtos.add(categoryService.getCategoryEntityById(item));
+        });
+
+        findPost.setCategories(categoryDtos);
+
+        var save = postRepository.save(findPost);
+
+        return postMapper.fromEntityToPostDto(save);
+    }
 
 }
