@@ -46,4 +46,11 @@ public class UserService implements IUser{
         log.info("User successfully updated");
     }
 
+    @KafkaListener(topics = "USER_DELETE_EVENT", containerFactory = "kafkaListenerContainerFactory")
+    private void deleteUserById(@Payload Long id) {
+        var fetchUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("The user was not found"));
+        userRepository.deleteById(fetchUser.getId());
+        log.info("Post service -> delete user by id");
+    }
+
 }
