@@ -1,8 +1,10 @@
 package com.reddit.post.controller.post;
 
+import com.reddit.post.dto.post.PostDto;
 import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.service.post.IPost;
+import com.reddit.post.service.search.SearchGeneric;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,8 @@ import javax.validation.Valid;
 public class PostController {
 
     private final IPost iPost;
+
+    private final SearchGeneric<PostDto> searchPosts;
 
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
@@ -44,6 +48,11 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody @Valid EditPostRequest request) {
         return new ResponseEntity<>(iPost.editPostById(id, request), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPosts(@RequestParam String name) {
+        return new ResponseEntity<>(searchPosts.search(name), HttpStatus.OK);
     }
 
 }

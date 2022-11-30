@@ -1,6 +1,5 @@
 package com.reddit.post.service.post.impl;
 
-import com.reddit.post.dto.category.CategoryDto;
 import com.reddit.post.dto.post.PostDto;
 import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
