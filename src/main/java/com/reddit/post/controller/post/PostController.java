@@ -1,5 +1,6 @@
 package com.reddit.post.controller.post;
 
+import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.service.post.IPost;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/post")
@@ -38,5 +41,9 @@ public class PostController {
         return new ResponseEntity<>(iPost.getAllPostsByUserId(id), HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody @Valid EditPostRequest request) {
+        return new ResponseEntity<>(iPost.editPostById(id, request), HttpStatus.OK);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.reddit.post.service.post;
 
 import com.reddit.post.dto.post.PostDto;
+import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,4 +18,7 @@ public interface IPost {
 
     Set<PostDto> getAllPostsByUserId(Long id);
 
+    void deletePostById(Long id);
+
+    PostDto editPostById(Long id, EditPostRequest request);
 }

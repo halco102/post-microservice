@@ -2,6 +2,7 @@ package com.reddit.post.service.post.impl;
 
 import com.reddit.post.dto.category.CategoryDto;
 import com.reddit.post.dto.post.PostDto;
+import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.exception.BadRequestException;
 import com.reddit.post.exception.NotFoundException;
@@ -26,10 +27,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -167,19 +165,29 @@ class PostServiceTest {
     @Test
     void getAllPosts() {
 
-        posts.add(new Post(1L, "title1", "desc1", "image1", true, LocalDateTime.MAX, null, user, categories));
-
-
         when(postRepository.findAll()).thenReturn(posts);
         when(postMapper.fromEntityToPostDto(Mockito.any()))
                 .thenReturn(new PostDto(1L, "title1", "desc1", "image1", true, postedBy, categoryDtos),
-                        new PostDto(2L, "title2", "desc2", "image2", true, postedBy, categoryDtos),
+                        new PostDto(2L, "title2", "desc2", "image2", false, postedBy, categoryDtos),
                         new PostDto(3L, "title3", "desc3", "image3", true, postedBy, categoryDtos));
 
         var actualValue = postService.getAllPosts();
 
         assertEquals(actualValue.size(), posts.size());
-        assertEquals(actualValue.get(0).getPostedBy().getId(), posts.get(0).getUser().getId());
+
+        for (int i = 0; i < actualValue.size(); i++) {
+            assertEquals(actualValue.get(i).getId(), posts.get(i).getId());
+            assertEquals(actualValue.get(i).getTitle(), posts.get(i).getTitle());
+            assertEquals(actualValue.get(i).getDescription(), posts.get(i).getDescription());
+            assertEquals(actualValue.get(i).getImageUrl(), posts.get(i).getImageUrl());
+            assertEquals(actualValue.get(i).isAllowComment(), posts.get(i).isAllowComment());
+            assertEquals(actualValue.get(i).getCategoryDtos().size(), posts.get(i).getCategories().size());
+            assertEquals(actualValue.get(i).getPostedBy().getId(), posts.get(i).getUser().getId());
+            assertEquals(actualValue.get(i).getPostedBy().getUsername(), posts.get(i).getUser().getUsername());
+            assertEquals(actualValue.get(i).getPostedBy().getImageUrl(), posts.get(i).getUser().getImageUrl());
+            assertEquals(actualValue.get(i).getPostedBy().getEmail(), posts.get(i).getUser().getEmail());
+        }
+
     }
 
     @Test
@@ -190,4 +198,36 @@ class PostServiceTest {
     void getAllPostsByUserId() {
     }
 
+    @Test
+    public void editPostByIdTest() {
+
+        var post = posts.get(0);
+        Set<CategoryDto> newCategories = new HashSet<>(Arrays.asList(categoryDtos.stream().findFirst().get()));
+
+        var req = new EditPostRequest("newTitle", "newDesc", false, new HashSet<>(Arrays.asList(2L)));
+        var newDto = new PostDto(1L, req.getTitle(), req.getDescription(), post.getImageUrl(), req.isAllowComment(), postedBy, newCategories);
+
+
+        when(postRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(posts.get(0)));
+        when(postRepository.save(Mockito.any(Post.class))).thenReturn(post);
+        when(postMapper.fromEntityToPostDto(Mockito.any(Post.class))).thenReturn(newDto);
+
+        var actualValues = postService.editPostById(1L, req);
+
+        assertEquals(actualValues.getId(), newDto.getId());
+        assertEquals(actualValues.getTitle(), req.getTitle());
+        assertEquals(actualValues.getDescription(), req.getDescription());
+        assertEquals(actualValues.getCategoryDtos().size(), req.getCategoryDtos().size());
+        assertEquals(actualValues.isAllowComment(), req.isAllowComment());
+        assertEquals(actualValues.getPostedBy(), postedBy);
+
+        assertEquals(actualValues.getCategoryDtos().stream().findFirst().get().getId(), 2L);
+    }
+
+    @Test
+    public void editPostByIdThrowNotFoundExceptionIfPostDoesNotExist() {
+        when(postRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> postService.editPostById(1L, new EditPostRequest()));
+    }
 }

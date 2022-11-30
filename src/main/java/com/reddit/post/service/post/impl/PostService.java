@@ -1,6 +1,8 @@
 package com.reddit.post.service.post.impl;
 
+import com.reddit.post.dto.category.CategoryDto;
 import com.reddit.post.dto.post.PostDto;
+import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.exception.BadRequestException;
 import com.reddit.post.exception.NotFoundException;
@@ -116,5 +118,32 @@ public class PostService implements IPost {
         return postMapper.collectionEntityToDtos(getAllPostsByUserId);
     }
 
+    @Override
+    public void deletePostById(Long id) {
+
+    }
+
+    @Override
+    @Transactional
+    public PostDto editPostById(Long id, EditPostRequest request) {
+
+        Set<Category> categoryDtos = new HashSet<>();
+        var findPost = postRepository.findById(id).orElseThrow(() -> new NotFoundException("The post was not found"));
+
+        findPost.setTitle(request.getTitle());
+        findPost.setDescription(request.getDescription());
+        findPost.setAllowComment(request.isAllowComment());
+        findPost.setEditedAt(LocalDateTime.now());
+
+        request.getCategoryDtos().forEach(item -> {
+            categoryDtos.add(categoryService.getCategoryEntityById(item));
+        });
+
+        findPost.setCategories(categoryDtos);
+
+        var save = postRepository.save(findPost);
+
+        return postMapper.fromEntityToPostDto(save);
+    }
 
 }
