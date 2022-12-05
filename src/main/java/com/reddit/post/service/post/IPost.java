@@ -14,11 +14,11 @@ public interface IPost {
 
     PostDto getPostByPostId(Long id);
 
-    PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile);
+    PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile, String jwt);
 
     Set<PostDto> getAllPostsByUserId(Long id);
 
     void deletePostById(Long id);
 
-    PostDto editPostById(Long id, EditPostRequest request);
+    PostDto editPostById(Long id, EditPostRequest request, String jwt);
 }
