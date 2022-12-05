@@ -27,9 +27,6 @@ public class PostRequestDto {
     private boolean allowComment;
 
     @NotNull
-    private Long userId;
-
-    @NotNull
     private Set<CategoryDto> categoryDtos;
 
 }
