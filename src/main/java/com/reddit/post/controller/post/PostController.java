@@ -1,27 +1,28 @@
 package com.reddit.post.controller.post;
 
-import com.reddit.post.dto.post.PostDto;
 import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
+import com.reddit.post.service.post.ILikeOrDislikePost;
 import com.reddit.post.service.post.IPost;
-import com.reddit.post.service.search.SearchGeneric;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
+@Slf4j
 public class PostController {
 
     private final IPost iPost;
 
-    private final SearchGeneric<PostDto> searchPosts;
+    private final ILikeOrDislikePost likeOrDislikePost;
 
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
@@ -31,8 +32,8 @@ public class PostController {
     @PostMapping(value = "", consumes = {  MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> savePost(@RequestBody PostRequestDto requestDto) {
-        return new ResponseEntity<>(iPost.savePost(requestDto, null), HttpStatus.OK);
+    public ResponseEntity<?> savePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return new ResponseEntity<>(iPost.savePost(requestDto, null, request.getHeader("Bearer")), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -46,13 +47,13 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody @Valid EditPostRequest request) {
-        return new ResponseEntity<>(iPost.editPostById(id, request), HttpStatus.OK);
+    public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody @Valid EditPostRequest request, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(iPost.editPostById(id, request, httpServletRequest.getHeader("Bearer")), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchPosts(@RequestParam String name) {
-        return new ResponseEntity<>(searchPosts.search(name), HttpStatus.OK);
+    @PostMapping("/like-dislike/{id}")
+    public ResponseEntity<?> likeDislikePost(@PathVariable(name = "id") Long postId, @RequestParam boolean isLike) {
+        return new ResponseEntity<>(likeOrDislikePost.likeOrDislikePost(isLike, postId), HttpStatus.OK);
     }
 
 }
