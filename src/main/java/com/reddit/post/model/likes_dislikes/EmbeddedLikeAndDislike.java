@@ -1,4 +1,3 @@
-/*
 package com.reddit.post.model.likes_dislikes;
 
 import lombok.AllArgsConstructor;
@@ -24,4 +23,3 @@ public class EmbeddedLikeAndDislike implements Serializable {
     private Long postId;
 
 }
-*/

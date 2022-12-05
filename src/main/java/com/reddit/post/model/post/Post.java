@@ -1,6 +1,7 @@
 package com.reddit.post.model.post;
 
 import com.reddit.post.model.category.Category;
+import com.reddit.post.model.likes_dislikes.LikeAndDislike;
 import com.reddit.post.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,8 +53,23 @@ public class Post {
             joinColumns = @JoinColumn(name = "posts_id"), inverseJoinColumns = @JoinColumn(name = "categories_id")
     )
     private Set<Category> categories;
+
+    @OneToMany(mappedBy = "post")
+    private Set<LikeAndDislike> postLikeDislike;
+
 /*
     @OneToMany(mappedBy = "post")
     private Set<LikeAndDislike> likeAndDislikes;*/
 
+    public Post(Long id, String title, String description, String imageUrl, boolean allowComment, LocalDateTime createdAt, LocalDateTime editedAt, User user, Set<Category> categories) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.allowComment = allowComment;
+        this.createdAt = createdAt;
+        this.editedAt = editedAt;
+        this.user = user;
+        this.categories = categories;
+    }
 }
