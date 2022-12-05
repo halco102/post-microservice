@@ -10,6 +10,7 @@ import com.reddit.post.mapper.post.PostMapper;
 import com.reddit.post.mapper.user.UserMapper;
 import com.reddit.post.model.category.Category;
 import com.reddit.post.repository.PostRepository;
+import com.reddit.post.security.JwtTokenUtil;
 import com.reddit.post.service.category.impl.CategoryService;
 import com.reddit.post.service.cloudinary.ICloudinary;
 import com.reddit.post.service.post.IPost;
@@ -45,15 +46,18 @@ public class PostService implements IPost {
 
     private final IUser iUser;
 
+    private final JwtTokenUtil jwtTokenUtil;
+
 
     @Override
     @Transactional
-    public PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile) {
+    public PostDto savePost(PostRequestDto requestDto, MultipartFile multipartFile, String jwt) {
 
         Set<Category> categories = new HashSet<>();
 
         //feign
-        var checkIfUserExists = userClient.getPostedByDtoByUserId(requestDto.getUserId());
+        //var checkIfUserExists = userClient.getPostedByDtoByUserId(requestDto.getUserId());
+        var checkIfUserExists = userClient.findUserByUsername(jwtTokenUtil.getUsernameByJwt(jwt));
 
         if (checkIfUserExists == null) {
             throw new  NotFoundException("The user was not found");
@@ -64,8 +68,9 @@ public class PostService implements IPost {
         if ((requestDto.getImageUrl() == null || requestDto.getImageUrl().isBlank()) && multipartFile == null)
             throw new BadRequestException("Bad request on post save");
 
-        if (multipartFile != null)
+        if (multipartFile != null && (requestDto.getImageUrl() != null || !requestDto.getImageUrl().isBlank()))
             requestDto.setImageUrl(cloudinary.getUrlFromUploadedMedia(multipartFile));
+
 
         if (requestDto.getCategoryDtos() == null || requestDto.getCategoryDtos().isEmpty())
             throw new BadRequestException("Categories are empty or null");
@@ -118,15 +123,37 @@ public class PostService implements IPost {
 
     @Override
     public void deletePostById(Long id) {
+        var findPost = postRepository.findById(id).orElseThrow(() -> new NotFoundException("The post was not found"));
 
+/*        if (findPost.getImageUrl().indexOf("https://res.cloudinary.com/") != 0) {
+            //cloudinary
+            try {
+                cloudinary.deleteMedia(Arrays.asList(findPost.getImageUrl()));
+            }catch (Exception e) {
+                throw new NotFoundException("Temp");
+            }
+
+        }*/
+
+        postRepository.deleteById(findPost.getId());
+        log.info("Delete post id " + findPost.getId());
     }
 
     @Override
     @Transactional
-    public PostDto editPostById(Long id, EditPostRequest request) {
+    public PostDto editPostById(Long id, EditPostRequest request, String jwt) {
 
         Set<Category> categoryDtos = new HashSet<>();
         var findPost = postRepository.findById(id).orElseThrow(() -> new NotFoundException("The post was not found"));
+        var findUser = userClient.findUserByUsername(jwtTokenUtil.getUsernameByJwt(jwt));
+
+        if (findUser == null) {
+            throw new NotFoundException("The user was not found");
+        }
+
+        if (findUser.getId() != findPost.getUser().getId()) {
+            throw new BadRequestException("Bad request, not the owner of the post");
+        }
 
         findPost.setTitle(request.getTitle());
         findPost.setDescription(request.getDescription());
@@ -143,5 +170,6 @@ public class PostService implements IPost {
 
         return postMapper.fromEntityToPostDto(save);
     }
+
 
 }
