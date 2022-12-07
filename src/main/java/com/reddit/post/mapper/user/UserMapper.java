@@ -1,13 +1,12 @@
 package com.reddit.post.mapper.user;
 
-import com.reddit.post.dto.UserDto;
+import com.reddit.post.dto.user.UserDto;
 import com.reddit.post.mapper.DoIgnore;
 import com.reddit.post.model.user.User;
 import message.PostedBy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import org.mapstruct.Qualifier;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Set;
