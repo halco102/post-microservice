@@ -4,7 +4,9 @@ import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 @Component
@@ -39,6 +41,14 @@ public class JwtTokenUtil implements Serializable {
             log.error(e.getMessage());
         }
         return false;
+    }
+
+    public static final String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7, headerAuth.length());
+        }
+        return null;
     }
 
 }
