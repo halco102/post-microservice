@@ -1,6 +1,7 @@
 package com.reddit.post.dto.post;
 
 import com.reddit.post.dto.category.CategoryDto;
+import com.reddit.post.dto.likedislike.LikeDislikeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,8 @@ public class PostDto {
     private PostedBy postedBy;
 
     private Set<CategoryDto> categoryDtos;
+
+    private Set<LikeDislikeDto> postLikedDislike;
 
     public PostDto(Long id, String title, String description, String imageUrl, PostedBy postedBy) {
         this.id = id;

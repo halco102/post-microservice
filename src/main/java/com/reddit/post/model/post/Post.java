@@ -54,7 +54,7 @@ public class Post {
     )
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LikeAndDislike> postLikeDislike;
 
 /*

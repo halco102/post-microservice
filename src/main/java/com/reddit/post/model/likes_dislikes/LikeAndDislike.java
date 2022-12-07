@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class LikeAndDislike {
 
     @EmbeddedId
-    EmbeddedLikeAndDislike embeddedLikeAndDislike = new EmbeddedLikeAndDislike();
+    EmbeddedLikeAndDislike id = new EmbeddedLikeAndDislike();
 
     @MapsId("userId")
     @ManyToOne
@@ -29,7 +29,7 @@ public class LikeAndDislike {
     @JoinColumn(referencedColumnName = "id", name = "posts_id")
     private Post post;
 
-    @Column(name = "isLike")
+    @Column(name = "is_like")
     private boolean isLike;
 
 }

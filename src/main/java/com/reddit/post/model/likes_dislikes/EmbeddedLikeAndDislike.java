@@ -22,4 +22,5 @@ public class EmbeddedLikeAndDislike implements Serializable {
     @Column(name = "posts_id", nullable = false)
     private Long postId;
 
+
 }

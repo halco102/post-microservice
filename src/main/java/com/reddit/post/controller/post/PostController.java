@@ -2,6 +2,7 @@ package com.reddit.post.controller.post;
 
 import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
+import com.reddit.post.security.JwtTokenUtil;
 import com.reddit.post.service.post.ILikeOrDislikePost;
 import com.reddit.post.service.post.IPost;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class PostController {
             MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> savePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        return new ResponseEntity<>(iPost.savePost(requestDto, null, request.getHeader("Bearer")), HttpStatus.OK);
+        return new ResponseEntity<>(iPost.savePost(requestDto, null, JwtTokenUtil.parseJwt(request)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -48,12 +49,12 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody @Valid EditPostRequest request, HttpServletRequest httpServletRequest) {
-        return new ResponseEntity<>(iPost.editPostById(id, request, httpServletRequest.getHeader("Bearer")), HttpStatus.OK);
+        return new ResponseEntity<>(iPost.editPostById(id, request, JwtTokenUtil.parseJwt(httpServletRequest)), HttpStatus.OK);
     }
 
     @PostMapping("/like-dislike/{id}")
-    public ResponseEntity<?> likeDislikePost(@PathVariable(name = "id") Long postId, @RequestParam boolean isLike) {
-        return new ResponseEntity<>(likeOrDislikePost.likeOrDislikePost(isLike, postId), HttpStatus.OK);
+    public ResponseEntity<?> likeDislikePost(@PathVariable(name = "id") Long postId, @RequestParam boolean isLike, HttpServletRequest request) {
+        return new ResponseEntity<>(likeOrDislikePost.likeOrDislikePost(isLike, postId, JwtTokenUtil.parseJwt(request)), HttpStatus.OK);
     }
 
 }
