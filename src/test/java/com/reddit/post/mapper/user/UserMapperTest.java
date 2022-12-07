@@ -1,3 +1,4 @@
+/*
 package com.reddit.post.mapper.user;
 
 import com.reddit.post.model.user.User;
@@ -8,6 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ExtendWith(SpringExtension.class)
 class UserMapperTest {
@@ -42,4 +47,29 @@ class UserMapperTest {
         Assertions.assertEquals(value.getImageUrl(), user.getImageUrl());
         Assertions.assertNull(value.getPosts());
     }
+
+
+    @Test
+    void fromUserSetToSetDtoTest() {
+
+        Set<User> users = new HashSet<>();
+
+        users.add(new User(1L, "user1", "email@email.com", "image1", new HashSet<>()));
+        users.add(new User(2L, "user2", "email2@email.com", "image2", new HashSet<>()));
+        users.add(new User(3L, "user3", "email3@email.com", "image3", new HashSet<>()));
+
+
+        var value = Mappers.getMapper(UserMapper.class).fromUserSetToSetDto(users);
+
+        var toListUsers = users.stream().collect(Collectors.toList());
+        var toListValues = value.stream().collect(Collectors.toList());
+
+        for (int i = 0; i < toListValues.size(); i++) {
+            Assertions.assertEquals(toListValues.get(i).getId(), toListUsers.get(i).getId());
+            Assertions.assertEquals(toListValues.get(i).getEmail(), toListUsers.get(i).getEmail());
+            Assertions.assertEquals(toListValues.get(i).getUsername(), toListUsers.get(i).getUsername());
+            Assertions.assertEquals(toListValues.get(i).getImageUrl(), toListUsers.get(i).getImageUrl());
+        }
+    }
 }
+*/
