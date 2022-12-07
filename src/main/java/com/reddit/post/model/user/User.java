@@ -36,7 +36,7 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<Post> posts;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<LikeAndDislike> postLikeDislike;
 
     public User(Long id, String username, String imageUrl) {
