@@ -1,4 +1,4 @@
-package com.reddit.post.dto;
+package com.reddit.post.dto.user;
 
 import com.reddit.post.dto.post.PostDto;
 import lombok.Data;

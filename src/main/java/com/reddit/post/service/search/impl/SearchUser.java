@@ -1,12 +1,11 @@
 package com.reddit.post.service.search.impl;
 
-import com.reddit.post.dto.UserDto;
+import com.reddit.post.dto.user.UserDto;
 import com.reddit.post.mapper.user.UserMapper;
 import com.reddit.post.repository.UserRepository;
 import com.reddit.post.service.search.SearchGeneric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import message.PostedBy;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

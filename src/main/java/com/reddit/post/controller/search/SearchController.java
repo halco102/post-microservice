@@ -1,6 +1,6 @@
 package com.reddit.post.controller.search;
 
-import com.reddit.post.dto.UserDto;
+import com.reddit.post.dto.user.UserDto;
 import com.reddit.post.dto.post.PostDto;
 import com.reddit.post.service.search.SearchGeneric;
 import lombok.RequiredArgsConstructor;
