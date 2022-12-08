@@ -1,0 +1,1 @@
+create sequence if not exists categories_sequence start 1 increment 1;
