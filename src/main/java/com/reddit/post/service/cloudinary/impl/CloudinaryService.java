@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -40,5 +41,11 @@ public class CloudinaryService implements ICloudinary {
         }
     }
 
+    //TODO -> to be tested
+    @Override
+    public void deleteMedia(List<String> imageUrls) throws Exception {
+        cloudinary.api().deleteResources(imageUrls, ObjectUtils.emptyMap());
+        log.info("Deleted images from cloudinary");
+    }
 
 }

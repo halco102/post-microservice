@@ -30,5 +30,9 @@ public class CategoryController {
         return new ResponseEntity<>(iCategory.getCategoryByName(name), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllCategories() {
+        return new ResponseEntity<>(iCategory.getAllCategories(), HttpStatus.OK);
+    }
 
 }

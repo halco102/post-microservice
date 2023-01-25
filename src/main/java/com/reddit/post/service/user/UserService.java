@@ -1,7 +1,10 @@
 package com.reddit.post.service.user;
 
+import com.reddit.post.dto.user.UserProfile;
 import com.reddit.post.exception.BadRequestException;
 import com.reddit.post.exception.NotFoundException;
+import com.reddit.post.feign.controller.UserClient;
+import com.reddit.post.mapper.post.PostMapper;
 import com.reddit.post.mapper.user.UserMapper;
 import com.reddit.post.model.user.User;
 import com.reddit.post.repository.UserRepository;
@@ -21,8 +24,9 @@ public class UserService implements IUser{
 
     private final UserMapper userMapper;
 
+    private final UserClient userClient;
 
-
+    private final PostMapper postMapper;
     @Override
     public User saveUser(User user) {
 
@@ -60,7 +64,7 @@ public class UserService implements IUser{
 
     @Override
     public PostedBy getUserById(Long id) {
-        var fetchUser =  userRepository.findById(id).orElseThrow(() -> new NotFoundException("User does not exist"));
+        var fetchUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User does not exist"));
         return userMapper.entityToPostedBy(fetchUser);
     }
 
@@ -68,4 +72,24 @@ public class UserService implements IUser{
     public User getUserEntityById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("The user does not exist"));
     }
+
+    @Override
+    public UserProfile getUserProfileById(Long id) {
+
+        var fetchUser = userRepository.findById(id);
+
+        if (fetchUser.isEmpty())
+            throw new NotFoundException("The user does not exist");
+
+        var fetchFollowersFromUser = userClient.getFollowersFromUserById(id);
+        var fetchFollowingFromUser = userClient.getFollowingFromUserById(id);
+
+        var toDto = userMapper.userEntityToUserProfile(fetchUser.get());
+        toDto.setFollowers(fetchFollowersFromUser);
+        toDto.setFollowing(fetchFollowingFromUser);
+        toDto.setPostDtos(postMapper.collectionEntityToDtos(fetchUser.get().getPosts()));
+
+        return toDto;
+    }
+
 }

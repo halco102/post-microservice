@@ -18,7 +18,7 @@ public interface IPost {
 
     Set<PostDto> getAllPostsByUserId(Long id);
 
-    void deletePostById(Long id);
+    void deletePostById(Long id, String jwt);
 
     PostDto editPostById(Long id, EditPostRequest request, String jwt);
 }

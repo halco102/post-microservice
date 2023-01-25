@@ -40,7 +40,7 @@ spring:
 
     locations: classpath:db/migration
     check-location: true
-    baseline-on-migrate: false
+    baseline-on-migrate: true
     driverClassName: org.postgresql.Driver
 
   mvc:

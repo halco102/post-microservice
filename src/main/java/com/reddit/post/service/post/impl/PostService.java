@@ -122,8 +122,12 @@ public class PostService implements IPost {
     }
 
     @Override
-    public void deletePostById(Long id) {
+    public void deletePostById(Long id, String jwt) {
         var findPost = postRepository.findById(id).orElseThrow(() -> new NotFoundException("The post was not found"));
+        var fetchCurrentUser = userClient.findUserByUsername(jwtTokenUtil.getUsernameByJwt(jwt));
+
+        if (findPost.getUser().getId() != fetchCurrentUser.getId())
+            throw new BadRequestException("This user cannot delete post");
 
 /*        if (findPost.getImageUrl().indexOf("https://res.cloudinary.com/") != 0) {
             //cloudinary

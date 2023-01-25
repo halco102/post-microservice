@@ -19,4 +19,5 @@ public interface ICategory {
     void deleteCategoryById(Long id);
 
     Category getCategoryEntityById(Long id);
+
 }

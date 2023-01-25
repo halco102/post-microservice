@@ -1,5 +1,6 @@
 package com.reddit.post.dto.post;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.reddit.post.dto.category.CategoryDto;
 import com.reddit.post.dto.likedislike.LikeDislikeDto;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class PostDto {
 
     private Set<CategoryDto> categoryDtos;
 
+    @JsonProperty("postLikedDislike")
     private Set<LikeDislikeDto> postLikedDislike;
 
     public PostDto(Long id, String title, String description, String imageUrl, PostedBy postedBy) {

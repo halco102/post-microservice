@@ -57,4 +57,9 @@ public class PostController {
         return new ResponseEntity<>(likeOrDislikePost.likeOrDislikePost(isLike, postId, JwtTokenUtil.parseJwt(request)), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePostById(@PathVariable Long id, HttpServletRequest req) {
+        iPost.deletePostById(id, JwtTokenUtil.parseJwt(req));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

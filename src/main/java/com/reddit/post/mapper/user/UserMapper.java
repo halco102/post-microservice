@@ -1,12 +1,15 @@
 package com.reddit.post.mapper.user;
 
 import com.reddit.post.dto.user.UserDto;
+import com.reddit.post.dto.user.UserProfile;
 import com.reddit.post.mapper.DoIgnore;
+import com.reddit.post.mapper.post.PostMapper;
 import com.reddit.post.model.user.User;
 import message.PostedBy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Set;
@@ -25,11 +28,15 @@ public interface UserMapper {
     @DoIgnore
     Set<UserDto> temp(Set<User> users);
 
-
     @DoIgnore
+    @Named("mapsPosts")
     @Mappings({
             @Mapping(source = "posts", target = "postDtos")
     })
     UserDto temp2(User user);
+
+    @DoIgnore
+    UserProfile userEntityToUserProfile(User user);
+
 
 }

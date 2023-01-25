@@ -52,4 +52,5 @@ public class User {
         this.imageUrl = imageUrl;
         this.posts = posts;
     }
+
 }
