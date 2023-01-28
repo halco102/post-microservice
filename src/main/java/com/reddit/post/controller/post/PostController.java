@@ -62,4 +62,10 @@ public class PostController {
         iPost.deletePostById(id, JwtTokenUtil.parseJwt(req));
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/like-dislike/user/{id}")
+    public ResponseEntity<?> getAllPostLikeDislikeFromUser(@PathVariable("id") Long userId) {
+        return new ResponseEntity<>(likeOrDislikePost.likeDislikePostByUser(userId), HttpStatus.OK);
+    }
+
 }

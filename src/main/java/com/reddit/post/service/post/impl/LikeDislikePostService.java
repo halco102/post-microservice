@@ -1,5 +1,6 @@
 package com.reddit.post.service.post.impl;
 
+import com.reddit.post.dto.likedislike.LikeDislikeDto;
 import com.reddit.post.dto.post.PostDto;
 import com.reddit.post.exception.BadRequestException;
 import com.reddit.post.exception.NotFoundException;
@@ -17,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -50,31 +52,6 @@ public class LikeDislikePostService implements ILikeOrDislikePost {
             throw new BadRequestException("User do not seem to be same internal error");
 
         return getPostToAddLikeDislike(fetchPostById, fetchUserFromPostDb, likeOrDislike);
-/*
-        var likeOrDislikeInPost = fetchPostById.getUser().getPostLikeDislike()
-                .stream().filter(item -> item.getPost().getId() == id).findFirst();
-
-        if (likeOrDislikeInPost.isEmpty()) {
-            fetchPostById.getPostLikeDislike().add(new LikeAndDislike(
-                    new EmbeddedLikeAndDislike(currentUser.getId(), fetchPostById.getId()),
-                    iUser.getUserEntityById(currentUser.getId()),
-                    fetchPostById,
-                    likeOrDislike
-            ));
-
-            return postMapper.fromEntityToPostDto(postRepository.save(fetchPostById));
-        }
-
-        if (likeOrDislikeInPost.get().isLike() == likeOrDislike){
-            likeOrDislikeInPost = null;
-        }
-        else{
-            likeOrDislikeInPost.get().setLike(likeOrDislike);
-            fetchPostById.getPostLikeDislike().add(likeOrDislikeInPost.get());
-        }
-        var savedEntity = postRepository.save(fetchPostById);
-
-        return postMapper.fromEntityToPostDto(savedEntity);*/
     }
 
     private PostDto getPostToAddLikeDislike(Post post, User user, boolean likeDislike) {
@@ -140,5 +117,11 @@ public class LikeDislikePostService implements ILikeOrDislikePost {
         var savePost = postRepository.save(post);
 
         return postMapper.fromEntityToPostDto(savePost);
+    }
+
+    @Override
+    public List<LikeDislikeDto> likeDislikePostByUser(Long userId) {
+        var test = postRepository.getAllLikedDislikedPostFromUserId(userId).orElseGet(() -> new ArrayList<>());
+        return postRepository.getAllLikedDislikedPostFromUserId(userId).orElseGet(() -> new ArrayList<>());
     }
 }

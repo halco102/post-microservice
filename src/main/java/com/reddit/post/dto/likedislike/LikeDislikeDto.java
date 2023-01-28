@@ -15,4 +15,5 @@ public class LikeDislikeDto {
 
     private boolean likeOrDislike;
 
+
 }
