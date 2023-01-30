@@ -24,9 +24,9 @@ public class PostRequestDto {
     @NotBlank
     private String imageUrl;
 
-    private boolean allowComment;
+    private boolean allowComments;
 
     @NotNull
-    private Set<CategoryDto> categoryDtos;
+    private Set<CategoryDto> categories;
 
 }

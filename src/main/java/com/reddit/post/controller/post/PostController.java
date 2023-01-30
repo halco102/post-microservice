@@ -1,5 +1,7 @@
 package com.reddit.post.controller.post;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reddit.post.dto.post.request.EditPostRequest;
 import com.reddit.post.dto.post.request.PostRequestDto;
 import com.reddit.post.security.JwtTokenUtil;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -33,9 +36,19 @@ public class PostController {
     @PostMapping(value = "", consumes = {  MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> savePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        return new ResponseEntity<>(iPost.savePost(requestDto, null, JwtTokenUtil.parseJwt(request)), HttpStatus.OK);
+    public ResponseEntity<?> savePost(@RequestPart("requestDto") String requestDto,
+                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                      HttpServletRequest servletRequest) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PostRequestDto postRequestDto = objectMapper.readValue(requestDto, PostRequestDto.class);
+
+        return new ResponseEntity<>(iPost.savePost(postRequestDto, multipartFile, JwtTokenUtil.parseJwt(servletRequest)), HttpStatus.OK);
     }
+
+    /*    public ResponseEntity<?> savePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return new ResponseEntity<>(iPost.savePost(requestDto, null, JwtTokenUtil.parseJwt(request)), HttpStatus.OK);
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPotsById(@PathVariable Long id) {

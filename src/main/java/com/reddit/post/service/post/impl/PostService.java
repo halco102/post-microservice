@@ -72,10 +72,10 @@ public class PostService implements IPost {
             requestDto.setImageUrl(cloudinary.getUrlFromUploadedMedia(multipartFile));
 
 
-        if (requestDto.getCategoryDtos() == null || requestDto.getCategoryDtos().isEmpty())
+        if (requestDto.getCategories() == null || requestDto.getCategories().isEmpty())
             throw new BadRequestException("Categories are empty or null");
 
-        requestDto.getCategoryDtos().stream().forEach(item -> {
+        requestDto.getCategories().stream().forEach(item -> {
                 categories.add(categoryService.getCategoryEntityById(item.getId()));
         });
 

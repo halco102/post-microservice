@@ -28,7 +28,8 @@ public interface PostMapper {
 
     @Mappings({
             @Mapping(source = "text", target = "description"),
-            @Mapping(target = "categories", source = "categoryDtos")
+            @Mapping(target = "categories", source = "categories"),
+            @Mapping(target = "allowComment", source = "allowComments")
     })
     Post fromPostRequestToEntity(PostRequestDto requestDto);
 
