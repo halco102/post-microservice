@@ -26,4 +26,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM LikeAndDislike as pld inner join Post as p on p.id = pld.post.id where pld.user.id = :userId")
     Optional<List<LikeDislikeDto>> getAllLikedDislikedPostFromUserId(@Param("userId") Long userId);
 
+    @Query(value = "select * from posts as p " +
+            "inner join posts_categories as pc on pc.posts_id = p.id " +
+            "inner join categories as c on c.id = pc.categories_id " +
+            "where c.\"name\" = :categoryName", nativeQuery = true)
+    Optional<List<Post>> getAllPostsByCategoryName(@Param("categoryName") String categoryName);
 }

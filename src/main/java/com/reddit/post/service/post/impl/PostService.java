@@ -83,6 +83,7 @@ public class PostService implements IPost {
 
         toEntity.setCreatedAt(LocalDateTime.now());
         toEntity.setCategories(categories);
+        toEntity.setPostLikeDislike(new HashSet<>());
 
         toEntity.setUser(user);
 
@@ -175,5 +176,13 @@ public class PostService implements IPost {
         return postMapper.fromEntityToPostDto(save);
     }
 
+    @Override
+    public List<PostDto> getAllPostsByCategoryName(String categoryName) {
+       var fetchPostByCategoryName = postRepository.getAllPostsByCategoryName(categoryName);
 
+       if (fetchPostByCategoryName.isEmpty())
+           throw new NotFoundException("Not found");
+
+       return fetchPostByCategoryName.get().stream().map(item -> postMapper.fromEntityToPostDto(item)).collect(Collectors.toList());
+    }
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import message.PostedBy;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data

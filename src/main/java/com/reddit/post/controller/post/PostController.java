@@ -81,4 +81,9 @@ public class PostController {
         return new ResponseEntity<>(likeOrDislikePost.likeDislikePostByUser(userId), HttpStatus.OK);
     }
 
+    @GetMapping("/category/{name}")
+    public ResponseEntity<?> getAllPostsByCategoryName(@PathVariable String name) {
+        return new ResponseEntity<>(iPost.getAllPostsByCategoryName(name), HttpStatus.OK);
+    }
+
 }

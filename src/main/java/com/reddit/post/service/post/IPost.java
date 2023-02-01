@@ -21,4 +21,7 @@ public interface IPost {
     void deletePostById(Long id, String jwt);
 
     PostDto editPostById(Long id, EditPostRequest request, String jwt);
+
+    List<PostDto> getAllPostsByCategoryName(String categoryName);
+
 }
